@@ -31,6 +31,11 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
 
 - The UI currently renders from `lib/mock-data.ts`.
 - `/api/admin/entries` validates payload and invalidates cache tag.
+- Market Share manual fallback in `/admin` persists to Google Sheets when:
+  - `GOOGLE_SHEETS_ID` is configured
+  - `GOOGLE_SERVICE_ACCOUNT_KEY` is configured
+  - Service account has Editor access to the sheet
+- If Google Sheets is unavailable, app falls back to local file storage.
 - Replace route internals with real integrations:
   - DefiLlama scrape/XHR fetch
   - CoinMarketCap API fetch
@@ -59,6 +64,24 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
 3. Compute WoW deltas from persisted history.
 4. Add robust scraping fallback and alerting.
 5. Add auth provider (NextAuth/SSO) for internal access.
+
+## 6. Google Sheets manual fallback format
+
+Set `GOOGLE_SHEETS_MANUAL_TAB=manual_fallback` (or your preferred tab name).  
+The app will create this tab automatically if it does not exist.
+
+Columns written by the app:
+
+1. `updated_at` (ISO timestamp)
+2. `market_share_current` (number)
+3. `market_share_delta` (number)
+4. `market_share_trend_csv` (comma-separated numbers)
+5. `source` (`manual` or `auto`)
+
+After saving from `/admin`, refresh `/` and verify:
+
+- `Market Share` KPI value and WoW delta match your submitted values
+- `Market Share Trend` chart matches your CSV series
 
 ## 5. Useful routes
 

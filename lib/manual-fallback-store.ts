@@ -1,24 +1,23 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import {
+  ManualFallbackData,
+  MarketShareFallback,
+  readManualFallbackFromSheets,
+  writeManualFallbackToSheets
+} from "@/lib/google-sheets-fallback";
 import { AdminEntryInput } from "@/lib/types";
-
-type MarketShareFallback = {
-  current: number;
-  delta: number;
-  trend: number[];
-  source: "manual" | "auto";
-};
-
-type ManualFallbackData = {
-  updatedAt?: string;
-  marketShare?: MarketShareFallback;
-};
 
 const STORE_FILE = process.env.VERCEL
   ? path.join("/tmp", "manual-fallback.json")
   : path.join(process.cwd(), "data", "manual-fallback.json");
 
 export async function readManualFallback(): Promise<ManualFallbackData> {
+  const fromSheets = await readManualFallbackFromSheets();
+  if (fromSheets && fromSheets.marketShare) {
+    return fromSheets;
+  }
+
   try {
     const raw = await readFile(STORE_FILE, "utf8");
     const parsed = JSON.parse(raw) as ManualFallbackData;
@@ -48,9 +47,16 @@ export async function persistManualFallbackFromEntry(payload: Partial<AdminEntry
     source: payload.source ?? prev?.source ?? "manual"
   };
 
-  await writeManualFallback({
+  const nextData: ManualFallbackData = {
     ...current,
     updatedAt: new Date().toISOString(),
     marketShare
-  });
+  };
+
+  const storedInSheets = await writeManualFallbackToSheets(nextData);
+  if (storedInSheets) {
+    return;
+  }
+
+  await writeManualFallback(nextData);
 }
