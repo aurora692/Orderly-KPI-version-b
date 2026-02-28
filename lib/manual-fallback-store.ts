@@ -12,6 +12,11 @@ const STORE_FILE = process.env.VERCEL
   ? path.join("/tmp", "manual-fallback.json")
   : path.join(process.cwd(), "data", "manual-fallback.json");
 
+export type FallbackPersistResult = {
+  storage: "sheets" | "file-fallback" | "noop";
+  sheetsError?: string;
+};
+
 export async function readManualFallback(): Promise<ManualFallbackData> {
   const fromSheets = await readManualFallbackFromSheets();
   if (fromSheets && fromSheets.marketShare) {
@@ -32,11 +37,13 @@ async function writeManualFallback(data: ManualFallbackData): Promise<void> {
   await writeFile(STORE_FILE, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
-export async function persistManualFallbackFromEntry(payload: Partial<AdminEntryInput>): Promise<void> {
+export async function persistManualFallbackFromEntry(
+  payload: Partial<AdminEntryInput>
+): Promise<FallbackPersistResult> {
   const current = await readManualFallback();
 
   if (payload.market_share_current === undefined && payload.market_share_trend === undefined) {
-    return;
+    return { storage: "noop" };
   }
 
   const prev = current.marketShare;
@@ -53,10 +60,11 @@ export async function persistManualFallbackFromEntry(payload: Partial<AdminEntry
     marketShare
   };
 
-  const storedInSheets = await writeManualFallbackToSheets(nextData);
-  if (storedInSheets) {
-    return;
+  const sheetsResult = await writeManualFallbackToSheets(nextData);
+  if (sheetsResult.ok) {
+    return { storage: "sheets" };
   }
 
   await writeManualFallback(nextData);
+  return { storage: "file-fallback", sheetsError: sheetsResult.error };
 }

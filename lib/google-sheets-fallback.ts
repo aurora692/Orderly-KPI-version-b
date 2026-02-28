@@ -12,6 +12,11 @@ export type ManualFallbackData = {
   marketShare?: MarketShareFallback;
 };
 
+export type SheetsWriteResult = {
+  ok: boolean;
+  error?: string;
+};
+
 const DEFAULT_TAB = "manual_fallback";
 const HEADER_ROW = ["updated_at", "market_share_current", "market_share_delta", "market_share_trend_csv", "source"];
 
@@ -116,13 +121,20 @@ export async function readManualFallbackFromSheets(): Promise<ManualFallbackData
   }
 }
 
-export async function writeManualFallbackToSheets(data: ManualFallbackData): Promise<boolean> {
-  if (!isConfigured() || !data.marketShare) return false;
+export async function writeManualFallbackToSheets(data: ManualFallbackData): Promise<SheetsWriteResult> {
+  if (!isConfigured()) {
+    return { ok: false, error: "Google Sheets is not configured" };
+  }
+  if (!data.marketShare) {
+    return { ok: false, error: "No market share data to write" };
+  }
 
   const spreadsheetId = getSheetId();
   const tabName = getTabName();
   const client = await getClient();
-  if (!client || !spreadsheetId) return false;
+  if (!client || !spreadsheetId) {
+    return { ok: false, error: "Unable to initialize Google Sheets client" };
+  }
 
   try {
     await ensureManualTab(client, spreadsheetId, tabName);
@@ -144,9 +156,9 @@ export async function writeManualFallbackToSheets(data: ManualFallbackData): Pro
       }
     });
 
-    return true;
+    return { ok: true };
   } catch (error) {
     console.error("Failed to write manual fallback to Google Sheets", error);
-    return false;
+    return { ok: false, error: error instanceof Error ? error.message : "Unknown Sheets write error" };
   }
 }

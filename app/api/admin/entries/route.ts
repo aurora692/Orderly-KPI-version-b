@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid market share fallback fields" }, { status: 400 });
   }
 
-  await persistManualFallbackFromEntry(payload);
+  const persistResult = await persistManualFallbackFromEntry(payload);
   revalidateTag("dashboard-data");
 
-  return NextResponse.json({ ok: true, received: payload });
+  return NextResponse.json({ ok: true, received: payload, persistence: persistResult });
 }
