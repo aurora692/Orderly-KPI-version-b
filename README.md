@@ -33,6 +33,10 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
 - Live integrations currently active:
   - CoinMarketCap: `$ORDER Price` and `CMC Rank`
   - Metabase: `Market Share` KPI and `Market Share Trend`
+- Step 2 integrations:
+  - DefiLlama (overview/rankings endpoints) for DeFi section live overrides
+  - Orderly DEX board (API or page scrape fallback) for Ecosystem section live overrides
+  - Google Sheets `kpi_history` snapshots for trend and WoW calculations
 - Remaining sections still use mock values until next integration steps.
 - `/api/admin/entries` validates payload and invalidates cache tag.
 - Market Share manual fallback in `/admin` persists to Google Sheets when:
@@ -87,6 +91,30 @@ After saving from `/admin`, refresh `/` and verify:
 
 - `Market Share` KPI value and WoW delta match your submitted values
 - `Market Share Trend` chart matches your CSV series
+
+## 7. Google Sheets history snapshot format
+
+Set `GOOGLE_SHEETS_HISTORY_TAB=kpi_history` (or your preferred tab name).
+
+Columns:
+
+1. `date`
+2. `total_perp_volume_7d`
+3. `orderly_rank_30d`
+4. `orderly_volume_30d`
+5. `top3_name_1`
+6. `top3_vol_1`
+7. `top3_name_2`
+8. `top3_vol_2`
+9. `top3_name_3`
+10. `top3_vol_3`
+11. `order_price`
+12. `order_cmc_rank`
+13. `total_dexs`
+14. `graduated_dexs`
+15. `source`
+
+The cron route `/api/cron/daily-refresh` now upserts the daily snapshot into this tab.
 
 ## 5. Useful routes
 
