@@ -29,7 +29,11 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
 
 ## 2. Current data behavior
 
-- The UI currently renders from `lib/mock-data.ts`.
+- The UI starts from `lib/mock-data.ts`, then applies live overrides where configured.
+- Live integrations currently active:
+  - CoinMarketCap: `$ORDER Price` and `CMC Rank`
+  - Metabase: `Market Share` KPI and `Market Share Trend`
+- Remaining sections still use mock values until next integration steps.
 - `/api/admin/entries` validates payload and invalidates cache tag.
 - Market Share manual fallback in `/admin` persists to Google Sheets when:
   - `GOOGLE_SHEETS_ID` is configured
@@ -38,8 +42,8 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
 - If Google Sheets is unavailable, app falls back to local file storage.
 - Replace route internals with real integrations:
   - DefiLlama scrape/XHR fetch
-  - CoinMarketCap API fetch
-  - Metabase card API fetch
+  - CoinMarketCap API fetch (partially implemented)
+  - Metabase card API fetch (partially implemented)
   - Google Sheets writes/reads
 
 ## 3. Step-by-step deployment on Vercel
