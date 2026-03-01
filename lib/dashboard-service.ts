@@ -51,8 +51,9 @@ async function getDashboardDataUncached(): Promise<DashboardData> {
   }
 
   const fallback = await readManualFallback();
+  const shouldApplyManualMarketShare = !metabaseMarketShare || process.env.FORCE_MANUAL_MARKET_SHARE === "true";
 
-  if (fallback.marketShare) {
+  if (fallback.marketShare && shouldApplyManualMarketShare) {
     const kpi = data.sections.business.kpis.find((item) => item.id === "market-share");
     if (kpi) {
       const deltaValue = fallback.marketShare.delta;

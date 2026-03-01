@@ -39,6 +39,7 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
   - `GOOGLE_SHEETS_ID` is configured
   - `GOOGLE_SERVICE_ACCOUNT_KEY` is configured
   - Service account has Editor access to the sheet
+- Manual fallback is only used when Metabase market share fetch is unavailable, unless `FORCE_MANUAL_MARKET_SHARE=true`.
 - If Google Sheets is unavailable, app falls back to local file storage.
 - Replace route internals with real integrations:
   - DefiLlama scrape/XHR fetch

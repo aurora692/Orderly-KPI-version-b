@@ -9,11 +9,12 @@ type MetabaseMarketShareData = {
 };
 
 function getHeaders(token: string): Record<string, string> {
+  const clean = token.trim().replace(/^['"]/, "").replace(/['"]$/, "");
   return {
     Accept: "application/json",
     "Content-Type": "application/json",
-    "x-api-key": token,
-    "X-Metabase-Session": token
+    "x-api-key": clean,
+    "X-Metabase-Session": clean
   };
 }
 
@@ -62,19 +63,32 @@ export async function fetchMetabaseMarketShareData(): Promise<MetabaseMarketShar
   const url = `${baseUrl.replace(/\/$/, "")}/api/card/${cardId}/query/json`;
 
   try {
-    const response = await fetch(url, {
+    const postResponse = await fetch(url, {
       method: "POST",
       headers: getHeaders(token),
       body: JSON.stringify({ parameters: [] }),
       next: { revalidate: 60 * 60 }
     });
 
+    const response = postResponse.ok
+      ? postResponse
+      : await fetch(url, {
+          method: "GET",
+          headers: getHeaders(token),
+          next: { revalidate: 60 * 60 }
+        });
+
     if (!response.ok) {
       console.error("Metabase request failed", response.status, await response.text());
       return null;
     }
 
-    const rows = (await response.json()) as Array<Record<string, unknown>>;
+    const payload = (await response.json()) as unknown;
+    const rows = Array.isArray(payload)
+      ? (payload as Array<Record<string, unknown>>)
+      : Array.isArray((payload as { data?: unknown })?.data)
+        ? ((payload as { data: Array<Record<string, unknown>> }).data ?? [])
+        : [];
     if (!Array.isArray(rows) || rows.length === 0) {
       return null;
     }
@@ -91,7 +105,13 @@ export async function fetchMetabaseMarketShareData(): Promise<MetabaseMarketShar
 
     if (trend.length < 1) return null;
 
-    const sorted = sortByDateLikeLabel(trend);
+    const normalizedTrend = trend.map((point) => ({
+      ...point,
+      // Some Metabase questions return ratio form (0.0022) for 0.22%.
+      value: point.value <= 1 ? point.value * 100 : point.value
+    }));
+
+    const sorted = sortByDateLikeLabel(normalizedTrend);
     const current = sorted[sorted.length - 1].value;
     const previous = sorted.length > 1 ? sorted[sorted.length - 2].value : current;
     const delta = current - previous;
