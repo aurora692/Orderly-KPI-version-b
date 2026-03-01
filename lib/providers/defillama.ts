@@ -32,7 +32,7 @@ function parseTop3(payload: unknown): Array<{ name: string; volume30d: number }>
         (typeof record.name === "string" && record.name) ||
         (typeof record.protocol === "string" && record.protocol) ||
         "";
-      const volume30d = pickNumber(record, ["volume30d", "volume_30d", "monthlyVolume", "reportedVolume30d"]);
+      const volume30d = pickNumber(record, ["reportedVolume30d", "volume30d", "volume_30d", "monthlyVolume"]);
       if (!name || volume30d === undefined) return null;
       return { name, volume30d };
     })
@@ -108,7 +108,7 @@ export async function fetchDefiLlamaPerpsData(): Promise<DefiLlamaPerpsData | nu
             (typeof record.name === "string" && record.name) ||
             (typeof record.protocol === "string" && record.protocol) ||
             "";
-          const volume30d = pickNumber(record, ["volume30d", "volume_30d", "monthlyVolume", "reportedVolume30d"]);
+          const volume30d = pickNumber(record, ["reportedVolume30d", "volume30d", "volume_30d", "monthlyVolume"]);
           if (!name || volume30d === undefined) return null;
           return { name, volume30d };
         })

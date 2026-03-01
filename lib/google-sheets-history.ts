@@ -188,14 +188,20 @@ export async function upsertHistorySnapshot(snapshot: HistorySnapshot): Promise<
 
     const current = await client.spreadsheets.values.get({
       spreadsheetId,
-      range: `${tabName}!A2:A`
+      range: `${tabName}!A2:O`
     });
 
-    const dateRows = current.data.values ?? [];
-    const existingIndex = dateRows.findIndex((row) => row[0] === snapshot.date);
+    const rows = current.data.values ?? [];
+    const existingIndex = rows.findIndex((row) => row[0] === snapshot.date);
     const rowValues = [toRow(snapshot)];
 
     if (existingIndex >= 0) {
+      const existingSource = (rows[existingIndex]?.[14] ?? "").toString().trim().toLowerCase();
+      const incomingSource = (snapshot.source ?? "auto").toLowerCase();
+      if (existingSource === "manual" && incomingSource === "auto") {
+        return { ok: true, error: "Skipped auto overwrite because manual row is locked for this date" };
+      }
+
       const rowNumber = existingIndex + 2;
       await client.spreadsheets.values.update({
         spreadsheetId,

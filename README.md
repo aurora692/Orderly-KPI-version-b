@@ -47,6 +47,7 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
 - You can force DeFi/Ecosystem current cards to use sheet history instead of live fetch:
   - `FORCE_HISTORY_DEFI=true`
   - `FORCE_HISTORY_ECOSYSTEM=true`
+- Auto snapshot writes will not overwrite a same-day row if that row's `source` is `manual`.
 - If Google Sheets is unavailable, app falls back to local file storage.
 - Replace route internals with real integrations:
   - DefiLlama scrape/XHR fetch
