@@ -100,8 +100,20 @@ async function ensureHistoryTab(client: sheets_v4.Sheets, spreadsheetId: string,
 
 function toNumber(value: string | undefined): number | undefined {
   if (!value) return undefined;
-  const parsed = Number(value);
-  return Number.isNaN(parsed) ? undefined : parsed;
+  const raw = value.toString().trim();
+  if (!raw) return undefined;
+
+  const clean = raw.replace(/[$,#\s]/g, "").replace(/,/g, "");
+  if (!clean) return undefined;
+
+  const suffix = clean.slice(-1).toUpperCase();
+  const base = Number(clean.replace(/[BMK%]/gi, ""));
+  if (Number.isNaN(base)) return undefined;
+
+  if (suffix === "B") return base * 1_000_000_000;
+  if (suffix === "M") return base * 1_000_000;
+  if (suffix === "K") return base * 1_000;
+  return base;
 }
 
 function parseRow(row: string[]): HistorySnapshot {

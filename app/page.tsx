@@ -83,6 +83,7 @@ export default async function Page() {
             title="Trading Volume Segment Mix (%)"
             data={data.sections.business.segmentBreakdown}
             labels={["2B", "2C", "MM"]}
+            yDomainMax={100}
           />
           <BarTrend title="New Users / Day" data={data.sections.business.userNewTrend} />
           <BarTrend title="Active Users / Day" data={data.sections.business.userActiveTrend} />
