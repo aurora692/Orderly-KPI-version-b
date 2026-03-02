@@ -20,6 +20,36 @@ type FormState = {
   market_share_current: string;
   market_share_delta: string;
   market_share_trend: string;
+  avg_daily_volume_current_m: string;
+  avg_daily_volume_delta_pct: string;
+  avg_daily_volume_trend: string;
+  revenue_day_current_k: string;
+  revenue_day_delta_pct: string;
+  revenue_day_trend: string;
+  new_users_current: string;
+  new_users_delta_pct: string;
+  new_users_trend: string;
+  active_users_current: string;
+  active_users_delta_pct: string;
+  active_users_trend: string;
+  stake_users_current: string;
+  stake_users_delta_pct: string;
+  stake_users_trend: string;
+  staked_vs_supply_current_pct: string;
+  staked_vs_supply_delta_pct: string;
+  staked_vs_supply_trend: string;
+  omnivault_tvl_current_m: string;
+  omnivault_tvl_delta_pct: string;
+  omnivault_tvl_trend: string;
+  volume_segments_1k_pct: string;
+  volume_segments_3c_pct: string;
+  volume_segments_mm_pct: string;
+  volume_segments_2b_trend: string;
+  volume_segments_2c_trend: string;
+  volume_segments_mm_trend: string;
+  omnivault_vault_a_trend: string;
+  omnivault_vault_b_trend: string;
+  omnivault_vault_c_trend: string;
   source: "auto" | "manual";
 };
 
@@ -41,6 +71,36 @@ const initialState: FormState = {
   market_share_current: "0.22",
   market_share_delta: "0.03",
   market_share_trend: "0.12,0.14,0.16,0.19,0.20,0.21,0.19,0.22",
+  avg_daily_volume_current_m: "62.8",
+  avg_daily_volume_delta_pct: "-2.5",
+  avg_daily_volume_trend: "55.1,58.4,61.2,63.8,64.5,67.1,64.4,62.8",
+  revenue_day_current_k: "3.8",
+  revenue_day_delta_pct: "-18.7",
+  revenue_day_trend: "3.1,3.4,3.6,3.9,4.3,4.1,4.7,3.8",
+  new_users_current: "2104",
+  new_users_delta_pct: "-21.1",
+  new_users_trend: "1690,1733,1880,1902,2104,2311,2666,2104",
+  active_users_current: "859",
+  active_users_delta_pct: "2.4",
+  active_users_trend: "715,731,778,799,808,847,839,859",
+  stake_users_current: "4305",
+  stake_users_delta_pct: "0.7",
+  stake_users_trend: "3990,4050,4112,4177,4233,4267,4276,4305",
+  staked_vs_supply_current_pct: "24.21",
+  staked_vs_supply_delta_pct: "-0.17",
+  staked_vs_supply_trend: "22.9,23.1,23.4,23.7,24.0,24.28,24.38,24.21",
+  omnivault_tvl_current_m: "10.9",
+  omnivault_tvl_delta_pct: "-2.0",
+  omnivault_tvl_trend: "9.1,9.6,10.2,10.7,11.3,11.7,11.1,10.9",
+  volume_segments_1k_pct: "17",
+  volume_segments_3c_pct: "38",
+  volume_segments_mm_pct: "45",
+  volume_segments_2b_trend: "18,19,17,16,17,17",
+  volume_segments_2c_trend: "36,37,39,40,39,38",
+  volume_segments_mm_trend: "46,44,44,44,44,45",
+  omnivault_vault_a_trend: "7.2,7.5,7.9,8.2,8.6,8.9,9.3,8.7",
+  omnivault_vault_b_trend: "1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.4",
+  omnivault_vault_c_trend: "0.8,0.9,1.0,1.1,1.2,1.2,1.4,0.8",
   source: "manual"
 };
 
@@ -68,7 +128,34 @@ export default function AdminPage() {
       ["graduated_dexs", "Graduated DEXs", "number"],
       ["market_share_current", "Market Share Current (%)", "number"],
       ["market_share_delta", "Market Share WoW Delta (%)", "number"],
-      ["market_share_trend", "Market Share Trend (%) CSV", "text"]
+      ["market_share_trend", "Market Share Trend (%) CSV", "text"],
+      ["avg_daily_volume_current_m", "Avg Daily Volume Current (M)", "number"],
+      ["avg_daily_volume_delta_pct", "Avg Daily Volume Delta (%)", "number"],
+      ["avg_daily_volume_trend", "Avg Daily Volume Trend CSV", "text"],
+      ["revenue_day_current_k", "Revenue/Day Current (K)", "number"],
+      ["revenue_day_delta_pct", "Revenue/Day Delta (%)", "number"],
+      ["revenue_day_trend", "Revenue/Day Trend CSV", "text"],
+      ["new_users_current", "New Users Current", "number"],
+      ["new_users_delta_pct", "New Users Delta (%)", "number"],
+      ["new_users_trend", "New Users Trend CSV", "text"],
+      ["active_users_current", "Active Users Current", "number"],
+      ["active_users_delta_pct", "Active Users Delta (%)", "number"],
+      ["active_users_trend", "Active Users Trend CSV", "text"],
+      ["stake_users_current", "Stake Users Current", "number"],
+      ["stake_users_delta_pct", "Stake Users Delta (%)", "number"],
+      ["stake_users_trend", "Stake Users Trend CSV", "text"],
+      ["staked_vs_supply_current_pct", "Staked/Circ Current (%)", "number"],
+      ["staked_vs_supply_delta_pct", "Staked/Circ Delta (%)", "number"],
+      ["staked_vs_supply_trend", "Staked/Circ Trend CSV", "text"],
+      ["omnivault_tvl_current_m", "Omnivault TVL Current (M)", "number"],
+      ["omnivault_tvl_delta_pct", "Omnivault TVL Delta (%)", "number"],
+      ["omnivault_tvl_trend", "Omnivault TVL Trend CSV", "text"],
+      ["volume_segments_2b_trend", "Volume Segments 2B Trend CSV", "text"],
+      ["volume_segments_2c_trend", "Volume Segments 2C Trend CSV", "text"],
+      ["volume_segments_mm_trend", "Volume Segments MM Trend CSV", "text"],
+      ["omnivault_vault_a_trend", "Omnivault Kronos QLS Trend CSV", "text"],
+      ["omnivault_vault_b_trend", "Omnivault Trend CSV", "text"],
+      ["omnivault_vault_c_trend", "Smaug Trend CSV", "text"]
     ] as const,
     []
   );
@@ -103,10 +190,13 @@ export default function AdminPage() {
       return Number.isNaN(numeric) ? undefined : numeric;
     };
 
-    const marketShareTrend = form.market_share_trend
-      .split(",")
-      .map((item) => Number(item.trim()))
-      .filter((item) => !Number.isNaN(item));
+    const parseCsvNumbers = (value: string): number[] | undefined => {
+      const parsed = value
+        .split(",")
+        .map((item) => Number(item.trim()))
+        .filter((item) => !Number.isNaN(item));
+      return parsed.length > 0 ? parsed : undefined;
+    };
 
     const payload = {
       ...form,
@@ -122,7 +212,34 @@ export default function AdminPage() {
       graduated_dexs: Number(form.graduated_dexs),
       market_share_current: parseOptionalNumber(form.market_share_current),
       market_share_delta: parseOptionalNumber(form.market_share_delta),
-      market_share_trend: marketShareTrend.length > 0 ? marketShareTrend : undefined
+      market_share_trend: parseCsvNumbers(form.market_share_trend),
+      avg_daily_volume_current_m: parseOptionalNumber(form.avg_daily_volume_current_m),
+      avg_daily_volume_delta_pct: parseOptionalNumber(form.avg_daily_volume_delta_pct),
+      avg_daily_volume_trend: parseCsvNumbers(form.avg_daily_volume_trend),
+      revenue_day_current_k: parseOptionalNumber(form.revenue_day_current_k),
+      revenue_day_delta_pct: parseOptionalNumber(form.revenue_day_delta_pct),
+      revenue_day_trend: parseCsvNumbers(form.revenue_day_trend),
+      new_users_current: parseOptionalNumber(form.new_users_current),
+      new_users_delta_pct: parseOptionalNumber(form.new_users_delta_pct),
+      new_users_trend: parseCsvNumbers(form.new_users_trend),
+      active_users_current: parseOptionalNumber(form.active_users_current),
+      active_users_delta_pct: parseOptionalNumber(form.active_users_delta_pct),
+      active_users_trend: parseCsvNumbers(form.active_users_trend),
+      stake_users_current: parseOptionalNumber(form.stake_users_current),
+      stake_users_delta_pct: parseOptionalNumber(form.stake_users_delta_pct),
+      stake_users_trend: parseCsvNumbers(form.stake_users_trend),
+      staked_vs_supply_current_pct: parseOptionalNumber(form.staked_vs_supply_current_pct),
+      staked_vs_supply_delta_pct: parseOptionalNumber(form.staked_vs_supply_delta_pct),
+      staked_vs_supply_trend: parseCsvNumbers(form.staked_vs_supply_trend),
+      omnivault_tvl_current_m: parseOptionalNumber(form.omnivault_tvl_current_m),
+      omnivault_tvl_delta_pct: parseOptionalNumber(form.omnivault_tvl_delta_pct),
+      omnivault_tvl_trend: parseCsvNumbers(form.omnivault_tvl_trend),
+      volume_segments_2b_trend: parseCsvNumbers(form.volume_segments_2b_trend),
+      volume_segments_2c_trend: parseCsvNumbers(form.volume_segments_2c_trend),
+      volume_segments_mm_trend: parseCsvNumbers(form.volume_segments_mm_trend),
+      omnivault_vault_a_trend: parseCsvNumbers(form.omnivault_vault_a_trend),
+      omnivault_vault_b_trend: parseCsvNumbers(form.omnivault_vault_b_trend),
+      omnivault_vault_c_trend: parseCsvNumbers(form.omnivault_vault_c_trend)
     };
 
     const res = await fetch("/api/admin/entries", {
@@ -181,7 +298,7 @@ export default function AdminPage() {
 
       <p className="mt-3 text-sm text-muted">{status}</p>
       <p className="mt-1 text-xs text-muted">
-        Market Share Trend format example: <code>0.12,0.14,0.16,0.19,0.20,0.21,0.19,0.22</code>
+        CSV format example (6 weeks): <code>55.1,58.4,61.2,63.8,64.5,67.1</code>
       </p>
 
       <section className="mt-6 grid gap-3 rounded-xl bg-card p-4 shadow-panel md:grid-cols-2">

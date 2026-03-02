@@ -82,17 +82,17 @@ export default async function Page() {
           <StackedTrend
             title="Trading Volume Segment Mix (%)"
             data={data.sections.business.segmentBreakdown}
-            labels={["1K", "3C", "MM"]}
+            labels={["2B", "2C", "MM"]}
           />
           <BarTrend title="New Users / Day" data={data.sections.business.userNewTrend} />
           <BarTrend title="Active Users / Day" data={data.sections.business.userActiveTrend} />
-          <LineTrend title="Stake Users" data={data.sections.business.stakeUsersTrend} />
-          <LineTrend title="Staked vs Circulating Supply (%)" data={data.sections.business.stakedVsSupplyTrend} suffix="%" />
+          <BarTrend title="$ORDER Stake Users" data={data.sections.business.stakeUsersTrend} />
+          <BarTrend title="Staked $ORDER vs Circulating Supply (%)" data={data.sections.business.stakedVsSupplyTrend} suffix="%" />
           <div className="lg:col-span-2">
             <StackedTrend
               title="Omnivault TVL Composition ($M)"
               data={data.sections.business.omnivaultTrend}
-              labels={["Vault A", "Vault B", "Vault C"]}
+              labels={["Kronos QLS", "Omnivault", "Smaug"]}
             />
           </div>
         </div>

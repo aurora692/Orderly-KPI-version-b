@@ -237,6 +237,7 @@ async function getDashboardDataUncached(): Promise<DashboardData> {
 
   const fallback = await readManualFallback();
   const shouldApplyManualMarketShare = !metabaseMarketShare || process.env.FORCE_MANUAL_MARKET_SHARE === "true";
+  const shouldApplyAllBusinessManual = process.env.FORCE_MANUAL_ALL_BUSINESS === "true";
 
   if (fallback.marketShare && shouldApplyManualMarketShare) {
     const kpi = data.sections.business.kpis.find((item) => item.id === "market-share");
@@ -257,6 +258,153 @@ async function getDashboardDataUncached(): Promise<DashboardData> {
         label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
         value
       }));
+    }
+
+    if (fallback.updatedAt) {
+      data.sections.business.lastUpdated = fallback.updatedAt;
+      data.asOf = fallback.updatedAt;
+    }
+  }
+
+  if (fallback.business && shouldApplyAllBusinessManual) {
+    const b = fallback.business;
+    const setBusinessKpi = (id: string, value?: string, delta?: number) => {
+      if (value === undefined) return;
+      const kpi = data.sections.business.kpis.find((item) => item.id === id);
+      if (!kpi) return;
+      kpi.value = value;
+      if (typeof delta === "number") {
+        kpi.delta = {
+          value: `${delta > 0 ? "+" : ""}${delta.toFixed(2)}%`,
+          direction: delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+          label: "WoW"
+        };
+      }
+      kpi.source = "manual";
+    };
+
+    setBusinessKpi("market-share", b.marketShare?.current !== undefined ? `${b.marketShare.current.toFixed(2)}%` : undefined, b.marketShare?.delta);
+    setBusinessKpi(
+      "avg-daily-volume",
+      b.avgDailyVolumeCurrentM !== undefined ? `$${b.avgDailyVolumeCurrentM.toFixed(1)}M` : undefined,
+      b.avgDailyVolumeDeltaPct
+    );
+    setBusinessKpi(
+      "revenue-day",
+      b.revenueDayCurrentK !== undefined ? `$${b.revenueDayCurrentK.toFixed(1)}K` : undefined,
+      b.revenueDayDeltaPct
+    );
+    setBusinessKpi(
+      "new-users",
+      b.newUsersCurrent !== undefined ? Math.round(b.newUsersCurrent).toLocaleString() : undefined,
+      b.newUsersDeltaPct
+    );
+    setBusinessKpi(
+      "active-users",
+      b.activeUsersCurrent !== undefined ? Math.round(b.activeUsersCurrent).toLocaleString() : undefined,
+      b.activeUsersDeltaPct
+    );
+    setBusinessKpi(
+      "stake-users",
+      b.stakeUsersCurrent !== undefined ? Math.round(b.stakeUsersCurrent).toLocaleString() : undefined,
+      b.stakeUsersDeltaPct
+    );
+    setBusinessKpi(
+      "staked-vs-supply",
+      b.stakedVsSupplyCurrentPct !== undefined ? `${b.stakedVsSupplyCurrentPct.toFixed(2)}%` : undefined,
+      b.stakedVsSupplyDeltaPct
+    );
+    setBusinessKpi(
+      "omnivault-tvl",
+      b.omnivaultTvlCurrentM !== undefined ? `$${b.omnivaultTvlCurrentM.toFixed(1)}M` : undefined,
+      b.omnivaultTvlDeltaPct
+    );
+
+    if (b.marketShare?.trend?.length) {
+      const size = b.marketShare.trend.length;
+      data.sections.business.marketShareTrend = b.marketShare.trend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value
+      }));
+    }
+    if (b.avgDailyVolumeTrend?.length) {
+      const size = b.avgDailyVolumeTrend.length;
+      data.sections.business.volumeTrend = b.avgDailyVolumeTrend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value
+      }));
+    }
+    if (b.revenueDayTrend?.length) {
+      const size = b.revenueDayTrend.length;
+      data.sections.business.revenueTrend = b.revenueDayTrend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value
+      }));
+    }
+    if (b.newUsersTrend?.length) {
+      const size = b.newUsersTrend.length;
+      data.sections.business.userNewTrend = b.newUsersTrend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value
+      }));
+    }
+    if (b.activeUsersTrend?.length) {
+      const size = b.activeUsersTrend.length;
+      data.sections.business.userActiveTrend = b.activeUsersTrend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value
+      }));
+    }
+    if (b.stakeUsersTrend?.length) {
+      const size = b.stakeUsersTrend.length;
+      data.sections.business.stakeUsersTrend = b.stakeUsersTrend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value
+      }));
+    }
+    if (b.stakedVsSupplyTrend?.length) {
+      const size = b.stakedVsSupplyTrend.length;
+      data.sections.business.stakedVsSupplyTrend = b.stakedVsSupplyTrend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value
+      }));
+    }
+    if (b.omnivaultTvlTrend?.length && b.omnivaultVaultATrend?.length && b.omnivaultVaultBTrend?.length && b.omnivaultVaultCTrend?.length) {
+      const size = Math.min(
+        b.omnivaultTvlTrend.length,
+        b.omnivaultVaultATrend.length,
+        b.omnivaultVaultBTrend.length,
+        b.omnivaultVaultCTrend.length
+      );
+      data.sections.business.omnivaultTrend = Array.from({ length: size }).map((_, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value: b.omnivaultVaultATrend![index],
+        valueB: b.omnivaultVaultBTrend![index],
+        valueC: b.omnivaultVaultCTrend![index]
+      }));
+    }
+
+    if (b.volumeSegments2bTrend?.length && b.volumeSegments2cTrend?.length && b.volumeSegmentsMmTrend?.length) {
+      const size = Math.min(b.volumeSegments2bTrend.length, b.volumeSegments2cTrend.length, b.volumeSegmentsMmTrend.length, 6);
+      data.sections.business.segmentBreakdown = Array.from({ length: size }).map((_, index) => ({
+        label: index === size - 1 ? "Now" : `W-${size - 1 - index}`,
+        value: b.volumeSegments2bTrend![index],
+        valueB: b.volumeSegments2cTrend![index],
+        valueC: b.volumeSegmentsMmTrend![index]
+      }));
+    } else if (
+      b.volumeSegments1kPct !== undefined &&
+      b.volumeSegments3cPct !== undefined &&
+      b.volumeSegmentsMmPct !== undefined
+    ) {
+      data.sections.business.segmentBreakdown = [
+        {
+          label: "Now",
+          value: b.volumeSegments1kPct,
+          valueB: b.volumeSegments3cPct,
+          valueC: b.volumeSegmentsMmPct
+        }
+      ];
     }
 
     if (fallback.updatedAt) {

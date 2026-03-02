@@ -39,11 +39,12 @@ This project is a Next.js dashboard starter based on `Orderly_KPI_Dashboard_PRD_
   - Google Sheets `kpi_history` snapshots for trend and WoW calculations
 - Remaining sections still use mock values until next integration steps.
 - `/api/admin/entries` validates payload and invalidates cache tag.
-- Market Share manual fallback in `/admin` persists to Google Sheets when:
+- Manual fallback in `/admin` persists to Google Sheets when:
   - `GOOGLE_SHEETS_ID` is configured
   - `GOOGLE_SERVICE_ACCOUNT_KEY` is configured
   - Service account has Editor access to the sheet
-- Manual fallback is only used when Metabase market share fetch is unavailable, unless `FORCE_MANUAL_MARKET_SHARE=true`.
+- Market Share fallback is used when Metabase market share fetch is unavailable, unless `FORCE_MANUAL_MARKET_SHARE=true`.
+- All Business KPI fallback can be forced with `FORCE_MANUAL_ALL_BUSINESS=true`.
 - You can force DeFi/Ecosystem current cards to use sheet history instead of live fetch:
   - `FORCE_HISTORY_DEFI=true`
   - `FORCE_HISTORY_ECOSYSTEM=true`
