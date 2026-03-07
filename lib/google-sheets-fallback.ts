@@ -14,6 +14,7 @@ export type BusinessManualFallback = {
   avgDailyVolumeCurrentM?: number;
   avgDailyVolumeDeltaPct?: number;
   avgDailyVolumeTrend?: CsvList;
+  avgDailyVolumeMonthlyTrend?: CsvList;
   revenueDayCurrentK?: number;
   revenueDayDeltaPct?: number;
   revenueDayTrend?: CsvList;
@@ -91,7 +92,8 @@ const HEADER_ROW = [
   "volume_segments_mm_trend_csv",
   "omnivault_vault_a_trend_csv",
   "omnivault_vault_b_trend_csv",
-  "omnivault_vault_c_trend_csv"
+  "omnivault_vault_c_trend_csv",
+  "avg_daily_volume_monthly_trend_csv"
 ];
 
 function getSheetId(): string | null {
@@ -193,7 +195,7 @@ export async function readManualFallbackFromSheets(): Promise<ManualFallbackData
   try {
     const response = await client.spreadsheets.values.get({
       spreadsheetId,
-      range: `${tabName}!A2:AI2`
+      range: `${tabName}!A2:AJ2`
     });
 
     const row = response.data.values?.[0];
@@ -213,6 +215,7 @@ export async function readManualFallbackFromSheets(): Promise<ManualFallbackData
         avgDailyVolumeCurrentM: parseNum(row[5]),
         avgDailyVolumeDeltaPct: parseNum(row[6]),
         avgDailyVolumeTrend: parseCsv(row[7]),
+        avgDailyVolumeMonthlyTrend: parseCsv(row[35]),
         revenueDayCurrentK: parseNum(row[8]),
         revenueDayDeltaPct: parseNum(row[9]),
         revenueDayTrend: parseCsv(row[10]),
@@ -314,12 +317,13 @@ export async function writeManualFallbackToSheets(data: ManualFallbackData): Pro
       toCsv(data.business?.volumeSegmentsMmTrend),
       toCsv(data.business?.omnivaultVaultATrend),
       toCsv(data.business?.omnivaultVaultBTrend),
-      toCsv(data.business?.omnivaultVaultCTrend)
+      toCsv(data.business?.omnivaultVaultCTrend),
+      toCsv(data.business?.avgDailyVolumeMonthlyTrend)
     ];
 
     await client.spreadsheets.values.update({
       spreadsheetId,
-      range: `${tabName}!A1:AI2`,
+      range: `${tabName}!A1:AJ2`,
       valueInputOption: "RAW",
       requestBody: {
         values: [HEADER_ROW, row]

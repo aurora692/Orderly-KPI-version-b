@@ -20,7 +20,7 @@ export type FallbackPersistResult = {
 
 export async function readManualFallback(): Promise<ManualFallbackData> {
   const fromSheets = await readManualFallbackFromSheets();
-  if (fromSheets && fromSheets.marketShare) {
+  if (fromSheets && (fromSheets.marketShare || fromSheets.business)) {
     return fromSheets;
   }
 
@@ -50,6 +50,7 @@ export async function persistManualFallbackFromEntry(
     payload.avg_daily_volume_current_m,
     payload.avg_daily_volume_delta_pct,
     payload.avg_daily_volume_trend,
+    payload.avg_daily_volume_monthly_trend,
     payload.revenue_day_current_k,
     payload.revenue_day_delta_pct,
     payload.revenue_day_trend,
@@ -104,6 +105,7 @@ export async function persistManualFallbackFromEntry(
     avgDailyVolumeCurrentM: payload.avg_daily_volume_current_m ?? previousBusiness?.avgDailyVolumeCurrentM,
     avgDailyVolumeDeltaPct: payload.avg_daily_volume_delta_pct ?? previousBusiness?.avgDailyVolumeDeltaPct,
     avgDailyVolumeTrend: payload.avg_daily_volume_trend ?? previousBusiness?.avgDailyVolumeTrend,
+    avgDailyVolumeMonthlyTrend: payload.avg_daily_volume_monthly_trend ?? previousBusiness?.avgDailyVolumeMonthlyTrend,
     revenueDayCurrentK: payload.revenue_day_current_k ?? previousBusiness?.revenueDayCurrentK,
     revenueDayDeltaPct: payload.revenue_day_delta_pct ?? previousBusiness?.revenueDayDeltaPct,
     revenueDayTrend: payload.revenue_day_trend ?? previousBusiness?.revenueDayTrend,

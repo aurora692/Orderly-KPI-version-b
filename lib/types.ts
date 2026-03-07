@@ -48,6 +48,7 @@ export type DashboardData = {
     business: DashboardSection & {
       marketShareTrend: SeriesPoint[];
       volumeTrend: SeriesPoint[];
+      volumeMonthlyTrend: SeriesPoint[];
       revenueTrend: SeriesPoint[];
       userNewTrend: SeriesPoint[];
       userActiveTrend: SeriesPoint[];
@@ -83,6 +84,7 @@ export type AdminEntryInput = {
   avg_daily_volume_current_m?: number;
   avg_daily_volume_delta_pct?: number;
   avg_daily_volume_trend?: number[];
+  avg_daily_volume_monthly_trend?: number[];
   revenue_day_current_k?: number;
   revenue_day_delta_pct?: number;
   revenue_day_trend?: number[];

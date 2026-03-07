@@ -5,9 +5,56 @@ import { KpiCard } from "@/components/KpiCard";
 import { Leaderboard } from "@/components/Leaderboard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { getDashboardData } from "@/lib/dashboard-service";
+import { SeriesPoint } from "@/lib/types";
+
+function addDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function addMonths(date: Date, months: number): Date {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
+function relabelWeeklySeries(points: SeriesPoint[], baseDate = new Date()): SeriesPoint[] {
+  const today = new Date(baseDate);
+  today.setHours(0, 0, 0, 0);
+  return points.map((point, index, arr) => ({
+    ...point,
+    label: addDays(today, -7 * (arr.length - 1 - index)).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric"
+    })
+  }));
+}
+
+function relabelMonthlySeries(points: SeriesPoint[], baseDate = new Date()): SeriesPoint[] {
+  const today = new Date(baseDate);
+  today.setHours(0, 0, 0, 0);
+  return points.map((point, index, arr) => ({
+    ...point,
+    label: addMonths(today, -(arr.length - 1 - index)).toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric"
+    })
+  }));
+}
 
 export default async function Page() {
   const data = await getDashboardData();
+  const businessMarketShareTrend = relabelWeeklySeries(data.sections.business.marketShareTrend);
+  const businessVolumeTrend = relabelWeeklySeries(data.sections.business.volumeTrend);
+  const businessMonthlyVolumeTrend = relabelMonthlySeries(data.sections.business.volumeMonthlyTrend);
+  const businessRevenueTrend = relabelWeeklySeries(data.sections.business.revenueTrend);
+  const businessSegmentBreakdown = relabelWeeklySeries(data.sections.business.segmentBreakdown);
+  const businessUserNewTrend = relabelWeeklySeries(data.sections.business.userNewTrend);
+  const businessUserActiveTrend = relabelWeeklySeries(data.sections.business.userActiveTrend);
+  const businessStakeUsersTrend = relabelWeeklySeries(data.sections.business.stakeUsersTrend);
+  const businessStakedVsSupplyTrend = relabelWeeklySeries(data.sections.business.stakedVsSupplyTrend);
+  const businessOmnivaultTrend = relabelWeeklySeries(data.sections.business.omnivaultTrend);
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
@@ -76,23 +123,24 @@ export default async function Page() {
           ))}
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
-          <LineTrend title="Market Share Trend (%)" data={data.sections.business.marketShareTrend} suffix="%" />
-          <BarTrend title="Average Daily Volume ($M)" data={data.sections.business.volumeTrend} suffix="M" />
-          <BarTrend title="Revenue / Day ($K)" data={data.sections.business.revenueTrend} suffix="K" />
+          <LineTrend title="Market Share Trend (%)" data={businessMarketShareTrend} suffix="%" />
+          <BarTrend title="Average Daily Volume in Weekly Timeframe ($M)" data={businessVolumeTrend} suffix="M" />
+          <BarTrend title="Average Daily Volume in Monthly Timeframe ($M)" data={businessMonthlyVolumeTrend} suffix="M" />
+          <BarTrend title="Revenue / Day ($K)" data={businessRevenueTrend} suffix="K" />
           <StackedTrend
             title="Trading Volume Segment Mix (%)"
-            data={data.sections.business.segmentBreakdown}
+            data={businessSegmentBreakdown}
             labels={["2B", "2C", "MM"]}
             yDomainMax={100}
           />
-          <BarTrend title="New Users / Day" data={data.sections.business.userNewTrend} />
-          <BarTrend title="Active Users / Day" data={data.sections.business.userActiveTrend} />
-          <BarTrend title="$ORDER Stake Users" data={data.sections.business.stakeUsersTrend} />
-          <BarTrend title="Staked $ORDER vs Circulating Supply (%)" data={data.sections.business.stakedVsSupplyTrend} suffix="%" />
+          <BarTrend title="New Users / Day" data={businessUserNewTrend} />
+          <BarTrend title="Active Users / Day" data={businessUserActiveTrend} />
+          <BarTrend title="$ORDER Stake Users" data={businessStakeUsersTrend} />
+          <BarTrend title="Staked $ORDER vs Circulating Supply (%)" data={businessStakedVsSupplyTrend} suffix="%" />
           <div className="lg:col-span-2">
             <StackedTrend
               title="Omnivault TVL Composition ($M)"
-              data={data.sections.business.omnivaultTrend}
+              data={businessOmnivaultTrend}
               labels={["Kronos QLS", "Omnivault", "Smaug"]}
             />
           </div>

@@ -356,6 +356,13 @@ async function getDashboardDataUncached(): Promise<DashboardData> {
         value
       }));
     }
+    if (b.avgDailyVolumeMonthlyTrend?.length) {
+      const size = b.avgDailyVolumeMonthlyTrend.length;
+      data.sections.business.volumeMonthlyTrend = b.avgDailyVolumeMonthlyTrend.map((value, index) => ({
+        label: index === size - 1 ? "Now" : `M-${size - 1 - index}`,
+        value
+      }));
+    }
     if (b.revenueDayTrend?.length) {
       const size = b.revenueDayTrend.length;
       data.sections.business.revenueTrend = b.revenueDayTrend.map((value, index) => ({

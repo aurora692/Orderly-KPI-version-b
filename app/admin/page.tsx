@@ -23,6 +23,7 @@ type FormState = {
   avg_daily_volume_current_m: string;
   avg_daily_volume_delta_pct: string;
   avg_daily_volume_trend: string;
+  avg_daily_volume_monthly_trend: string;
   revenue_day_current_k: string;
   revenue_day_delta_pct: string;
   revenue_day_trend: string;
@@ -74,6 +75,7 @@ const initialState: FormState = {
   avg_daily_volume_current_m: "62.8",
   avg_daily_volume_delta_pct: "-2.5",
   avg_daily_volume_trend: "55.1,58.4,61.2,63.8,64.5,67.1,64.4,62.8",
+  avg_daily_volume_monthly_trend: "41.2,44.8,46.1,48.9,51.4,53.3,56.2,58.0,60.7,61.9,63.5,62.8",
   revenue_day_current_k: "3.8",
   revenue_day_delta_pct: "-18.7",
   revenue_day_trend: "3.1,3.4,3.6,3.9,4.3,4.1,4.7,3.8",
@@ -132,6 +134,7 @@ export default function AdminPage() {
       ["avg_daily_volume_current_m", "Avg Daily Volume Current (M)", "number"],
       ["avg_daily_volume_delta_pct", "Avg Daily Volume Delta (%)", "number"],
       ["avg_daily_volume_trend", "Avg Daily Volume Trend CSV", "text"],
+      ["avg_daily_volume_monthly_trend", "Avg Daily Volume Monthly Trend CSV (12)", "text"],
       ["revenue_day_current_k", "Revenue/Day Current (K)", "number"],
       ["revenue_day_delta_pct", "Revenue/Day Delta (%)", "number"],
       ["revenue_day_trend", "Revenue/Day Trend CSV", "text"],
@@ -216,6 +219,7 @@ export default function AdminPage() {
       avg_daily_volume_current_m: parseOptionalNumber(form.avg_daily_volume_current_m),
       avg_daily_volume_delta_pct: parseOptionalNumber(form.avg_daily_volume_delta_pct),
       avg_daily_volume_trend: parseCsvNumbers(form.avg_daily_volume_trend),
+      avg_daily_volume_monthly_trend: parseCsvNumbers(form.avg_daily_volume_monthly_trend),
       revenue_day_current_k: parseOptionalNumber(form.revenue_day_current_k),
       revenue_day_delta_pct: parseOptionalNumber(form.revenue_day_delta_pct),
       revenue_day_trend: parseCsvNumbers(form.revenue_day_trend),

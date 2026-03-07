@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
 
   const arrayFields: Array<keyof AdminEntryInput> = [
     "avg_daily_volume_trend",
+    "avg_daily_volume_monthly_trend",
     "revenue_day_trend",
     "new_users_trend",
     "active_users_trend",

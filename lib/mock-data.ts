@@ -159,6 +159,20 @@ export const mockDashboardData: DashboardData = {
         { label: "W-1", value: 64.4 },
         { label: "Now", value: 62.8 }
       ],
+      volumeMonthlyTrend: [
+        { label: "M-11", value: 41.2 },
+        { label: "M-10", value: 44.8 },
+        { label: "M-9", value: 46.1 },
+        { label: "M-8", value: 48.9 },
+        { label: "M-7", value: 51.4 },
+        { label: "M-6", value: 53.3 },
+        { label: "M-5", value: 56.2 },
+        { label: "M-4", value: 58.0 },
+        { label: "M-3", value: 60.7 },
+        { label: "M-2", value: 61.9 },
+        { label: "M-1", value: 63.5 },
+        { label: "Now", value: 62.8 }
+      ],
       revenueTrend: [
         { label: "W-7", value: 3.1 },
         { label: "W-6", value: 3.4 },
