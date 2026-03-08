@@ -45,6 +45,8 @@ function relabelMonthlySeries(points: SeriesPoint[], baseDate = new Date()): Ser
 
 export default async function Page() {
   const data = await getDashboardData();
+  const defiTrend6w = relabelWeeklySeries(data.sections.defi.trend6w);
+  const ecosystemOnboardingTrend = relabelWeeklySeries(data.sections.ecosystem.onboardingTrend);
   const businessMarketShareTrend = relabelWeeklySeries(data.sections.business.marketShareTrend);
   const businessVolumeTrend = relabelWeeklySeries(data.sections.business.volumeTrend);
   const businessMonthlyVolumeTrend = relabelMonthlySeries(data.sections.business.volumeMonthlyTrend);
@@ -88,7 +90,7 @@ export default async function Page() {
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <BarTrend title="6-Week Weekly Perp Volume Trend ($B)" data={data.sections.defi.trend6w} />
+            <BarTrend title="6-Week Weekly Perp Volume Trend ($B)" data={defiTrend6w} />
           </div>
           <Leaderboard rows={data.sections.defi.leaderboard} />
           <div className="lg:col-span-3">
@@ -158,7 +160,7 @@ export default async function Page() {
             <KpiCard key={item.id} kpi={item} />
           ))}
         </div>
-        <BarTrend title="Weekly New DEX Onboarding" data={data.sections.ecosystem.onboardingTrend} />
+        <BarTrend title="Weekly New DEX Onboarding" data={ecosystemOnboardingTrend} />
       </section>
     </main>
   );

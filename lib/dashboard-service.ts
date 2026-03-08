@@ -24,7 +24,7 @@ function buildTrendFromHistory(points: Array<{ date: string; value?: number }>, 
   const filtered = points.filter((point) => typeof point.value === "number") as Array<{ date: string; value: number }>;
   const slice = filtered.slice(-limit);
   return slice.map((point, index) => ({
-    label: index === slice.length - 1 ? "Now" : `W-${slice.length - 1 - index}`,
+    label: point.date,
     value: point.value
   }));
 }
@@ -56,6 +56,10 @@ function applyHistoryOverlay(
   const latestAny = history[history.length - 1];
 
   const latestPerp = latestWith((row) => row.total_perp_volume_7d);
+  data.sections.defi.trend6w = buildTrendFromHistory(
+    history.map((item) => ({ date: item.date, value: item.total_perp_volume_7d ? item.total_perp_volume_7d / 1_000_000_000 : undefined })),
+    6
+  );
   if (latestPerp && options.useHistoryForDefiCurrent) {
     const kpi = data.sections.defi.kpis.find((item) => item.id === "weekly-perp-volume");
     if (kpi) {
@@ -70,11 +74,6 @@ function applyHistoryOverlay(
       }
       kpi.source = latestPerp.row.source ?? "auto";
     }
-
-    data.sections.defi.trend6w = buildTrendFromHistory(
-      history.map((item) => ({ date: item.date, value: item.total_perp_volume_7d ? item.total_perp_volume_7d / 1_000_000_000 : undefined })),
-      6
-    );
   }
 
   const latestRank = latestWith((row) => row.orderly_rank_30d);
@@ -142,9 +141,9 @@ function applyHistoryOverlay(
       return { label: item.date, value };
     })
     .filter((item): item is { label: string; value: number } => Boolean(item))
-    .slice(-8)
-    .map((item, index, arr) => ({
-      label: index === arr.length - 1 ? "Now" : `W-${arr.length - 1 - index}`,
+    .slice(-6)
+    .map((item) => ({
+      label: item.label,
       value: item.value
     }));
 
