@@ -17,6 +17,7 @@ type FormState = {
   order_cmc_rank: string;
   total_dexs: string;
   graduated_dexs: string;
+  weekly_new_dex_onboarding: string;
   market_share_current: string;
   market_share_delta: string;
   market_share_trend: string;
@@ -69,6 +70,7 @@ const initialState: FormState = {
   order_cmc_rank: "650",
   total_dexs: "2170",
   graduated_dexs: "146",
+  weekly_new_dex_onboarding: "26",
   market_share_current: "0.22",
   market_share_delta: "0.03",
   market_share_trend: "0.12,0.14,0.16,0.19,0.20,0.21,0.19,0.22",
@@ -128,6 +130,7 @@ export default function AdminPage() {
       ["order_cmc_rank", "CMC Rank", "number"],
       ["total_dexs", "Total DEXs", "number"],
       ["graduated_dexs", "Graduated DEXs", "number"],
+      ["weekly_new_dex_onboarding", "Weekly New DEX Onboarding", "number"],
       ["market_share_current", "Market Share Current (%)", "number"],
       ["market_share_delta", "Market Share WoW Delta (%)", "number"],
       ["market_share_trend", "Market Share Trend (%) CSV", "text"],
@@ -213,6 +216,7 @@ export default function AdminPage() {
       order_cmc_rank: Number(form.order_cmc_rank),
       total_dexs: Number(form.total_dexs),
       graduated_dexs: Number(form.graduated_dexs),
+      weekly_new_dex_onboarding: parseOptionalNumber(form.weekly_new_dex_onboarding),
       market_share_current: parseOptionalNumber(form.market_share_current),
       market_share_delta: parseOptionalNumber(form.market_share_delta),
       market_share_trend: parseCsvNumbers(form.market_share_trend),

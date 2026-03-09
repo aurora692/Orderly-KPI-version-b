@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { upsertHistorySnapshot } from "@/lib/google-sheets-history";
 import { persistManualFallbackFromEntry } from "@/lib/manual-fallback-store";
 import { AdminEntryInput } from "@/lib/types";
 
@@ -63,7 +64,8 @@ export async function POST(request: NextRequest) {
     "omnivault_tvl_delta_pct",
     "volume_segments_1k_pct",
     "volume_segments_3c_pct",
-    "volume_segments_mm_pct"
+    "volume_segments_mm_pct",
+    "weekly_new_dex_onboarding"
   ];
 
   const invalidArray = arrayFields.find((key) => {
@@ -82,8 +84,27 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: `Invalid numeric field: ${invalidNumber}` }, { status: 400 });
   }
 
+  const snapshotResult = await upsertHistorySnapshot({
+    date: payload.date,
+    total_perp_volume_7d: payload.total_perp_volume_7d,
+    orderly_rank_30d: payload.orderly_rank_30d,
+    orderly_volume_30d: payload.orderly_volume_30d,
+    top3_name_1: payload.top3_name_1,
+    top3_vol_1: payload.top3_vol_1,
+    top3_name_2: payload.top3_name_2,
+    top3_vol_2: payload.top3_vol_2,
+    top3_name_3: payload.top3_name_3,
+    top3_vol_3: payload.top3_vol_3,
+    order_price: payload.order_price,
+    order_cmc_rank: payload.order_cmc_rank,
+    total_dexs: payload.total_dexs,
+    graduated_dexs: payload.graduated_dexs,
+    weekly_new_dex_onboarding: payload.weekly_new_dex_onboarding,
+    source: payload.source ?? "manual"
+  });
+
   const persistResult = await persistManualFallbackFromEntry(payload);
   revalidateTag("dashboard-data");
 
-  return NextResponse.json({ ok: true, received: payload, persistence: persistResult });
+  return NextResponse.json({ ok: true, received: payload, snapshot: snapshotResult, persistence: persistResult });
 }

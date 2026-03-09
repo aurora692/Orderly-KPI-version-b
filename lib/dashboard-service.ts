@@ -136,8 +136,11 @@ function applyHistoryOverlay(
   data.sections.ecosystem.onboardingTrend = history
     .map((item, index) => {
       const prev = index > 0 ? history[index - 1] : undefined;
-      if (item.total_dexs === undefined) return null;
-      const value = prev?.total_dexs !== undefined ? Math.max(item.total_dexs - prev.total_dexs, 0) : 0;
+      const manualValue = item.weekly_new_dex_onboarding;
+      const autoValue =
+        item.total_dexs !== undefined ? (prev?.total_dexs !== undefined ? Math.max(item.total_dexs - prev.total_dexs, 0) : 0) : undefined;
+      const value = manualValue ?? autoValue;
+      if (value === undefined) return null;
       return { label: item.date, value };
     })
     .filter((item): item is { label: string; value: number } => Boolean(item))

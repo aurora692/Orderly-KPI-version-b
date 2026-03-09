@@ -78,6 +78,7 @@ export type AdminEntryInput = {
   order_cmc_rank: number;
   total_dexs: number;
   graduated_dexs: number;
+  weekly_new_dex_onboarding?: number;
   market_share_current?: number;
   market_share_delta?: number;
   market_share_trend?: number[];

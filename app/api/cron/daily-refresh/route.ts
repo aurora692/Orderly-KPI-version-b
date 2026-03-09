@@ -26,6 +26,7 @@ export async function GET() {
   const cmcRank = data.sections.token.kpis.find((item) => item.id === "cmc-rank")?.value;
   const totalDexs = data.sections.ecosystem.kpis.find((item) => item.id === "total-dexs")?.value;
   const graduatedDexs = data.sections.ecosystem.kpis.find((item) => item.id === "graduated-dexs")?.value;
+  const latestOnboarding = data.sections.ecosystem.onboardingTrend[data.sections.ecosystem.onboardingTrend.length - 1]?.value;
 
   const leaderboard = data.sections.defi.leaderboard;
 
@@ -43,6 +44,7 @@ export async function GET() {
     order_cmc_rank: cmcRank ? parseDisplayNumber(cmcRank) : undefined,
     total_dexs: totalDexs ? parseDisplayNumber(totalDexs) : undefined,
     graduated_dexs: graduatedDexs ? parseDisplayNumber(graduatedDexs) : undefined,
+    weekly_new_dex_onboarding: latestOnboarding,
     source: "auto"
   });
 

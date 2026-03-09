@@ -15,6 +15,7 @@ export type HistorySnapshot = {
   order_cmc_rank?: number;
   total_dexs?: number;
   graduated_dexs?: number;
+  weekly_new_dex_onboarding?: number;
   source?: "auto" | "manual";
 };
 
@@ -34,7 +35,8 @@ const HEADER_ROW = [
   "order_cmc_rank",
   "total_dexs",
   "graduated_dexs",
-  "source"
+  "source",
+  "weekly_new_dex_onboarding"
 ];
 
 function getSheetId(): string | null {
@@ -92,7 +94,7 @@ async function ensureHistoryTab(client: sheets_v4.Sheets, spreadsheetId: string,
 
   await client.spreadsheets.values.update({
     spreadsheetId,
-    range: `${tabName}!A1:O1`,
+    range: `${tabName}!A1:P1`,
     valueInputOption: "RAW",
     requestBody: { values: [HEADER_ROW] }
   });
@@ -132,7 +134,8 @@ function parseRow(row: string[]): HistorySnapshot {
     order_cmc_rank: toNumber(row[11]),
     total_dexs: toNumber(row[12]),
     graduated_dexs: toNumber(row[13]),
-    source: row[14] === "manual" ? "manual" : "auto"
+    source: row[14] === "manual" ? "manual" : "auto",
+    weekly_new_dex_onboarding: toNumber(row[15])
   };
 }
 
@@ -152,7 +155,8 @@ function toRow(snapshot: HistorySnapshot): string[] {
     snapshot.order_cmc_rank?.toString() ?? "",
     snapshot.total_dexs?.toString() ?? "",
     snapshot.graduated_dexs?.toString() ?? "",
-    snapshot.source ?? "auto"
+    snapshot.source ?? "auto",
+    snapshot.weekly_new_dex_onboarding?.toString() ?? ""
   ];
 }
 
@@ -167,7 +171,7 @@ export async function readHistorySnapshots(limit = 8): Promise<HistorySnapshot[]
   try {
     const response = await client.spreadsheets.values.get({
       spreadsheetId,
-      range: `${tabName}!A2:O`
+      range: `${tabName}!A2:P`
     });
 
     const rows = response.data.values ?? [];
@@ -200,7 +204,7 @@ export async function upsertHistorySnapshot(snapshot: HistorySnapshot): Promise<
 
     const current = await client.spreadsheets.values.get({
       spreadsheetId,
-      range: `${tabName}!A2:O`
+      range: `${tabName}!A2:P`
     });
 
     const rows = current.data.values ?? [];
@@ -217,14 +221,14 @@ export async function upsertHistorySnapshot(snapshot: HistorySnapshot): Promise<
       const rowNumber = existingIndex + 2;
       await client.spreadsheets.values.update({
         spreadsheetId,
-        range: `${tabName}!A${rowNumber}:O${rowNumber}`,
+        range: `${tabName}!A${rowNumber}:P${rowNumber}`,
         valueInputOption: "RAW",
         requestBody: { values: rowValues }
       });
     } else {
       await client.spreadsheets.values.append({
         spreadsheetId,
-        range: `${tabName}!A:O`,
+        range: `${tabName}!A:P`,
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         requestBody: { values: rowValues }
